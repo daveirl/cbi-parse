@@ -39,7 +39,7 @@ jobs:
           username: ${{ secrets.EMAIL_ADDRESS }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "Weekly CBI Register Report"
-          to: ${{ secrets.EMAIL_ADDRESS }}
+          to: ${{ secrets.EMAIL_DELIVERY }}
           from: "CBI Automation"
           body: "Attached are your weekly CBI Register reports: Full DB, New Funds, and all ETFs."
           attachments: "CBI_Full_Database.xlsx,CBI_New_Weekly_Funds.xlsx,CBI_All_ETFs_List.xlsx"
