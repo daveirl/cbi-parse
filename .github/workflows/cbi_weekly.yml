@@ -6,7 +6,7 @@
           username: ${{ secrets.EMAIL_ADDRESS }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "Weekly CBI Register Report & Recent ETFs"
-          to: ${{ secrets.EMAIL_DELIVERY }}
+          to: ${{ secrets.EMAIL_ADDRESS }}
           from: "CBI Automation"
           html_body: file://email_body.html
           attachments: "CBI_Full_Database.xlsx,CBI_New_Weekly_Funds.xlsx,CBI_All_ETFs_List.xlsx"
