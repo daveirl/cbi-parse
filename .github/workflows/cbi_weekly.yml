@@ -2,14 +2,12 @@ name: Weekly CBI Shadow Sync
 
 on:
   schedule:
-    - cron: '0 9 * * 1' # Monday at 9AM
-  workflow_dispatch: # Allows you to run it manually to test
+    - cron: '0 9 * * 1' # Monday 9AM
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # Extra safety to ensure the bot can write to the repo
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -30,7 +28,7 @@ jobs:
           git config --global user.name "CBI-Bot"
           git config --global user.email "bot@github.com"
           git add cbi_shadow_db.csv
-          git commit -m "Update Shadow DB [skip ci]" || echo "No changes to commit"
+          git commit -m "Update Shadow DB [skip ci]" || echo "No changes"
           git push
 
       - name: Send Reports
@@ -40,8 +38,8 @@ jobs:
           server_port: 465
           username: ${{ secrets.EMAIL_ADDRESS }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "Weekly CBI Register Report & Recent ETFs"
+          subject: "Weekly CBI Register Report"
           to: ${{ secrets.EMAIL_DELIVERY }}
           from: "CBI Automation"
-          html_body: file://email_body.html
+          body: "Attached are your weekly CBI Register reports: Full DB, New Funds, and all ETFs."
           attachments: "CBI_Full_Database.xlsx,CBI_New_Weekly_Funds.xlsx,CBI_All_ETFs_List.xlsx"
