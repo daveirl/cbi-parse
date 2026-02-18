@@ -1,4 +1,39 @@
-- name: Send Reports
+name: Weekly CBI Shadow Sync
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Monday at 9AM
+  workflow_dispatch: # Allows you to run it manually to test
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Extra safety to ensure the bot can write to the repo
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install requests beautifulsoup4 pdfplumber pandas openpyxl
+
+      - name: Run Sync Script
+        run: python cbi_shadow_sync.py
+
+      - name: Commit Updated CSV
+        run: |
+          git config --global user.name "CBI-Bot"
+          git config --global user.email "bot@github.com"
+          git add cbi_shadow_db.csv
+          git commit -m "Update Shadow DB [skip ci]" || echo "No changes to commit"
+          git push
+
+      - name: Send Reports
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -6,7 +41,7 @@
           username: ${{ secrets.EMAIL_ADDRESS }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "Weekly CBI Register Report & Recent ETFs"
-          to: ${{ secrets.EMAIL_ADDRESS }}
+          to: ${{ secrets.EMAIL_DELIVERY }}
           from: "CBI Automation"
           html_body: file://email_body.html
           attachments: "CBI_Full_Database.xlsx,CBI_New_Weekly_Funds.xlsx,CBI_All_ETFs_List.xlsx"
